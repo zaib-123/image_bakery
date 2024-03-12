@@ -8,8 +8,7 @@ on:
 jobs:
     build:
         name: Build
-        runs-on: 
-          image_bakery
+        runs-on: ubuntu-latest
 
         steps:
             - name: Checkout Repository
@@ -24,3 +23,9 @@ jobs:
                  pip install --upgrade flask jinja2
 
                  python app.py &
+
+            - name: Build docker image
+              run: |
+                docker build -t front_dkr_image
+
+          
