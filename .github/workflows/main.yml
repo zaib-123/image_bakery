@@ -22,4 +22,4 @@ jobs:
                  pip install -r requirement.txt
                  pip install --upgrade flask jinja2
 
-                 python app.py
+                 python app.py &
