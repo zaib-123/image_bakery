@@ -30,5 +30,5 @@ jobs:
                 GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT}}   
               run: |
                gcloud auth configure-docker us-central1-docker.pkg.dev           
-               docker build -t us-central1-docker.pkg.dev/vminstance-414214/frontend/ .
-               docker push us-central1-docker.pkg.dev/vminstance-414214/frontend/
+               docker build -t us-central1-docker.pkg.dev/vminstance-414214/frontend:latest .
+               docker push us-central1-docker.pkg.dev/vminstance-414214/frontend:latest
