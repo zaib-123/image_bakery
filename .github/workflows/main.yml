@@ -27,8 +27,9 @@ jobs:
                 project_id: ${{ secrets.GOOGLE_PROJECT}}
             - name: build and push docker image
               env:
-                GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT}}   
+                  GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT}}   
               run: |
-               gcloud auth configure-docker us-central1-docker.pkg.dev           
-               docker build -t us-central1-docker.pkg.dev/vminstance-414214/frontend:latest .
-               docker push us-central1-docker.pkg.dev/vminstance-414214/frontend:latest
+                  gcloud auth configure-docker us-central1-docker.pkg.dev           
+                  docker build -t us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/vminstance-414214/frontend:latest .
+                  docker push us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/vminstance-414214/frontend:latest
+              
