@@ -26,6 +26,6 @@ jobs:
 
             - name: Build docker image
               run: |
-                docker build -t front_dkr_image
+                docker build -t front_dkr_image .
 
           
