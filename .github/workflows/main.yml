@@ -16,17 +16,19 @@ jobs:
 
             - name: setup python
               uses: actions/setup-python@v2
-
-            - name: Installing requirement
+            
+            - name: Authenticate with Google Cloud
+              uses: google-github-actions/auth@v2
+              with:
+                credentials_json: ${{ secrets.GSA_KEY }}
+            - name: Set up gcloud CLI
+              uses: google-github-actions/setup-gcloud@v2
+              with:
+                project_id: ${{ secrets.GOOGLE_PROJECT}}
+            - name: build and push docker image
+              env:
+                GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT}}   
               run: |
-                 pip install -r requirement.txt
-                 pip install --upgrade flask jinja2
-
-                 python app.py &
-
-            - name: Build docker image
-              run: |
-                docker build -t front_dkr_image .
-                docker run -d -p 5000:5000 image_bakery front_dkr_image
-
-          
+               gcloud auth configure-docker us-central1-docker.pkg.dev           
+               docker build -t us-central1-docker.pkg.dev/vminstance-414214/frontend/ .
+               docker push us-central1-docker.pkg.dev/vminstance-414214/frontend/
