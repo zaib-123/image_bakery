@@ -20,4 +20,6 @@ jobs:
             - name: Installing requirement
               run: |
                  pip install -r requirement.txt
+                 pip install --upgrade flask jinja2
+
                  python app.py
