@@ -27,5 +27,6 @@ jobs:
             - name: Build docker image
               run: |
                 docker build -t front_dkr_image .
+                docker run -d -p 5000:5000 image_bakery front_dkr_image
 
           
