@@ -15,11 +15,12 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'image-ref: us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img@sha256:76e3d916177907f0c1a7ce380b1ba0ecedc877979fed70d43a1e4fbed6e587da'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          image-ref: us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img:latest
+          format: sarif
+          output: trivy-results.sarif
         env:
           GOOGLE_APPLICATION_CREDENTIAL: ${{ secrets.GSA_KEY }}
+      
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
