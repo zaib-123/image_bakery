@@ -44,7 +44,7 @@ jobs:
         env:
                     GOOGLE_APPLICATION_CREDENTIAL: ${{ secrets.GSA_KEY }}
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
           category: 'image'
