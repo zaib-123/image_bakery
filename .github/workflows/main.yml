@@ -1,35 +1,50 @@
-name: Push image 
+name: Push image with Trivy scan
 
 on:
-    push:
-        branches:
-          - main
+  push:
+    branches:
+      - main
 
 jobs:
-    build:
-        name: Build
-        runs-on: ubuntu-latest
+  build:
+    name: Build and Scan
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-            - name: setup python
-              uses: actions/setup-python@v2
-            
-            - name: Authenticate with Google Cloud
-              uses: google-github-actions/auth@v2
-              with:
-                credentials_json: ${{ secrets.GSA_KEY }}
-            - name: Set up gcloud CLI
-              uses: google-github-actions/setup-gcloud@v2
-              with:
-                project_id: ${{ secrets.GOOGLE_PROJECT}}
-            - name: build and push docker image
-              env:
-                  GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT}}   
-              run: |
-                  gcloud auth configure-docker us-central1-docker.pkg.dev           
-                  docker build -t us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/frontend/python_img:latest .
-                  docker push us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/frontend/python_img:latest
-              
+      - name: Setup Python
+        uses: actions/setup-python@v2
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GSA_KEY }}
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GOOGLE_PROJECT }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img:latest
+          format: sarif
+          output: trivy-results.sarif
+        env:
+          GOOGLE_APPLICATION_CREDENTIAL: ${{ secrets.GSA_KEY }}
+
+      - name: Build and push Docker image
+        env:
+          GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+          docker build -t us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/frontend/python_img:latest .
+          docker push us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/frontend/python_img:latest
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
