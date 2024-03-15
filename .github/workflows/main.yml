@@ -1,55 +1,27 @@
-name: Push image with Trivy scan
-
+name: build
 on:
   push:
     branches:
       - main
-
+  pull_request:
 jobs:
   build:
-    name: Build and Scan
-    runs-on: ubuntu-latest
-
+    name: Build
+    runs-on: ubuntu-20.04
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-      
-      - name: Authenticate with GitHub
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GSA_KEY }}
-
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GOOGLE_PROJECT }}
-
-      - name: Build and push Docker image
-        env:
-          GOOGLE_PROJECT: ${{ secrets.GOOGLE_PROJECT }}
-        run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev
-          docker build -t us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/frontend/python_img:latest .
-          docker push us-central1-docker.pkg.dev/${GOOGLE_PROJECT}/frontend/python_img:latest
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-            image-ref: 'us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img:latest'
-            format: 'sarif'
-            output: 'trivy-results.sarif'
+          image-ref: 'us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img:latest:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
         env:
-                    GOOGLE_APPLICATION_CREDENTIAL: ${{ secrets.GSA_KEY }}
+          GOOGLE_APPLICATION_CREDENTIAL: ${{ secrets.GSA_KEY }}
+
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-results.sarif'
-          category: 'image'
