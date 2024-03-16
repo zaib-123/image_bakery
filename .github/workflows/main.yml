@@ -13,6 +13,12 @@ jobs:
         - name: Check out code
           uses: actions/checkout@v1
 
+        - name: Run command
+          run: |
+           gcloud auth configure-docker us-central1-docker.pkg.dev
+           docker pull \
+               us-central1-docker.pkg.dev/vminstance-414214/frontend/python_img:latest
+
         - name: Run Trivy vulnerability scanner
           uses: aquasecurity/trivy-action@master
           with:
