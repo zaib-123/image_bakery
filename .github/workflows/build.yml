@@ -1,4 +1,4 @@
-name: Build
+name: Solar-scanner
 
 on:
   push:
