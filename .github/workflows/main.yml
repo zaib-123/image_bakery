@@ -23,7 +23,9 @@ jobs:
   
         - name: Install Trivy
           run: |
-            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin latestupdate${{ env.TRIVY_VERSION }}
+           wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
+           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
+          
   
         - name: Test
           run: BATS_LIB_PATH=${{ env.BATS_LIB_PATH }} bats --recursive --timing .
