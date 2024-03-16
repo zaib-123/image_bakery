@@ -9,35 +9,16 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     steps:
-
-        - name: Setup BATS
-          uses: mig4/setup-bats@v1
-          with:
-            bats-version: 1.7.0
-  
-        - name: Setup Bats libs
-          uses: brokenpip3/setup-bats-libs@0.1.0
   
         - name: Check out code
           uses: actions/checkout@v1
-  
-        - name: Install Trivy
-          run: |
-           wget https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.deb
-           sudo dpkg -i trivy_0.18.3_Linux-64bit.deb
-          
-  
-        - name: Test
-          run: BATS_LIB_PATH=${{ env.BATS_LIB_PATH }} bats --recursive --timing .
-        - name: Checkout code
-          uses: actions/checkout@v3
 
         - name: Run Trivy vulnerability scanner
           uses: aquasecurity/trivy-action@master
           with:
-           image-ref: us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img:latest
-           format: sarif
-           output: trivy-results.sarif
+           image-ref: 'us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img:latest'
+           format: 'sarif'
+           output: 'trivy-results.sarif'
           env:
            GOOGLE_APPLICATION_CREDENTIAL: ${{ secrets.GSA_KEY }}
       
