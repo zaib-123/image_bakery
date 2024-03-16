@@ -16,7 +16,7 @@ jobs:
         - name: Run Trivy vulnerability scanner
           uses: aquasecurity/trivy-action@master
           with:
-           image-ref: 'us-central1-docker.pkg.dev/${{ secrets.GOOGLE_PROJECT }}/frontend/python_img:latest'
+           image-ref: docker pull \us-central1-docker.pkg.dev/vminstance-414214/frontend/python_img:latest
            format: 'sarif'
            output: 'trivy-results.sarif'
           env:
